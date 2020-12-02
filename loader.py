@@ -23,3 +23,55 @@ def integer_list(input_filename):
       directory.
     """
     return [int(line) for line in string_list(input_filename)]
+
+class CharacterGrid:
+    """
+    Represents a puzzle input as a grid of characters.
+
+    The first character in the file is at position (0,0). The positive x axis 
+    extends to the right, and the positive y axis extends download. For example,
+    the fifth character on the 2nd line would be at position (1,4).
+    """
+    def __init__(self,input_filename):
+        """
+        Loads the puzzle input data.
+
+        Mandatory arguments:
+        * input_filename - the name of the input file relative to the current
+          directory.
+        """
+        input_as_string_list = string_list(input_filename)
+        self.character_positions = {}
+        for y in range(len(input_as_string_list)):
+            for x in range(len(input_as_string_list[y])):
+                self.character_positions[(x,y)] = input_as_string_list[y][x]
+    def get_character(self, x, y):
+        """
+        Retrieves a single character in a given position.
+
+        Mandatory arguments:
+        * x - the x coordinate (i.e. column starting from 0) of the desired 
+              character.
+        * y - the y coordinate (i.e. line starting from 0) of the desired 
+              character.
+        """
+        return self.character_positions[(x,y)]
+
+    def display(self):
+        """
+        Prints the character grid to the console.
+        """
+        x = 0
+        y = 0
+        while True:
+            try:
+                print(self.get_character(x,y), end='')
+            except KeyError:
+                if x == 0:
+                    break
+                else:
+                    y += 1
+                    x = 0
+                    print('')
+                    continue
+            x += 1
