@@ -57,6 +57,22 @@ class CharacterGrid:
         """
         return self.character_positions[(x,y)]
 
+    def set_character(self, x, y, new_character):
+        """
+        Sets the character at position (x,y) to new_character.
+        """
+        self.character_positions[(x,y)] = new_character
+    def get_max_x(self):
+        """
+        Retrieves the largest x coordinate occupied by a character.
+        """
+        return max([position_tuple[0] for position_tuple in self.character_positions.keys()])
+
+    def get_max_y(self):
+        """
+        Retrieves the largest y coordinate occupied by a character.
+        """
+        return max([position_tuple[1] for position_tuple in self.character_positions.keys()])
     def display(self):
         """
         Prints the character grid to the console.
