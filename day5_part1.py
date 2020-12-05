@@ -5,14 +5,8 @@ import loader
 boarding_passes = loader.string_list("input_day5")
 
 def convert_pass_to_row_col(bpass):
-    row = 0
-    col = 0
-    for i in range(7):
-        if bpass[i] == "B":
-            row += 2 ** (6-i)
-    for i in range(3):
-        if bpass[i+7] == "R":
-            col += 2 ** (2-i)
+    row = int(bpass[0:7].replace("F","0").replace("B","1"),2)
+    col = int(bpass[7:].replace("L","0").replace("R","1"),2)
     return {"row": row,
             "col": col,
             "id": row * 8 + col }
