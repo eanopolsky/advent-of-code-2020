@@ -2,6 +2,11 @@
 A library for loading AoC input files.
 """
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 def string_list(input_filename):
     """
     Returns a puzzle input as a list of strings, one per line. Newlines are
@@ -41,10 +46,10 @@ class CharacterGrid:
           directory.
         """
         input_as_string_list = string_list(input_filename)
-        self.character_positions = {}
+        self.__character_positions = {}
         for y in range(len(input_as_string_list)):
             for x in range(len(input_as_string_list[y])):
-                self.character_positions[(x,y)] = input_as_string_list[y][x]
+                self.__character_positions[(x,y)] = {"character": input_as_string_list[y][x]}
     def get_character(self, x, y):
         """
         Retrieves a single character in a given position.
@@ -55,24 +60,48 @@ class CharacterGrid:
         * y - the y coordinate (i.e. line starting from 0) of the desired 
               character.
         """
-        return self.character_positions[(x,y)]
+        return self.__character_positions[(x,y)]["character"]
 
     def set_character(self, x, y, new_character):
         """
         Sets the character at position (x,y) to new_character.
         """
-        self.character_positions[(x,y)] = new_character
+        try:
+            self.__character_positions[(x,y)]["character"] = new_character
+        except KeyError:
+            self.__character_positions[(x,y)] = {"character": new_character}
+            logger.debug(f"Setting character at position ({x},{y}). There was no character previously at this location.")
+    def set_highlight(self, x, y):
+        """
+        Causes the character at the given position to be highlighted in an ANSI 
+        terminal when display() is called.
+        """
+        try:
+            self.__character_positions[(x,y)]["highlighted"] = True
+        except KeyError:
+            logger.error(f"Attempted to highlight nonexistent character at position ({x},{y}).")
+            raise
+    def clear_highlight(self, x, y):
+        """
+        Causes the character at the given position to be printed without ANSI
+        color when display() is called.
+        """
+        try:
+            self.__character_positions[(x,y)]["highlighted"] = False
+        except KeyError:
+            logger.error(f"Attempted to clear highlight on nonexistent character at position ({x},{y}).")
+            raise
     def get_max_x(self):
         """
         Retrieves the largest x coordinate occupied by a character.
         """
-        return max([position_tuple[0] for position_tuple in self.character_positions.keys()])
+        return max([position_tuple[0] for position_tuple in self.__character_positions.keys()])
 
     def get_max_y(self):
         """
         Retrieves the largest y coordinate occupied by a character.
         """
-        return max([position_tuple[1] for position_tuple in self.character_positions.keys()])
+        return max([position_tuple[1] for position_tuple in self.__character_positions.keys()])
     def display(self):
         """
         Prints the character grid to the console.
@@ -81,7 +110,15 @@ class CharacterGrid:
         y = 0
         while True:
             try:
-                print(self.get_character(x,y), end='')
+                character_position = self.__character_positions[(x,y)]
+                try:
+                    highlighted = character_position["highlighted"]
+                except:
+                    highlighted = False
+                if highlighted:
+                    print('\033[41m' + character_position["character"] + '\033[49m', end='')
+                else:
+                    print(character_position["character"], end='')
             except KeyError:
                 if x == 0:
                     break
