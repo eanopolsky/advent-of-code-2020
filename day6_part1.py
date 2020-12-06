@@ -2,17 +2,13 @@
 
 import loader
 
-inp = loader.string_list("input_day6")
+raw_survey_groups = loader.blank_line_delimited("input_day6")
 
-groups = []
-current_group = set()
-for line in inp:
-    if line == "":
-        groups.append(current_group)
-        current_group = set()
-    else:
-        for character in line:
-            current_group.add(character)
-groups.append(current_group)
+union_groups = []
+for raw_survey_group in raw_survey_groups:
+    union_group = set()
+    for survey_response in raw_survey_group:
+        union_group = union_group.union(set(survey_response))
+    union_groups.append(union_group)
 
-print(sum([len(group) for group in groups]))
+print(sum([len(group) for group in union_groups]))
