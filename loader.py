@@ -2,10 +2,10 @@
 A library for loading AoC input files.
 """
 
+import copy
+
 import logging
-
 logger = logging.getLogger(__name__)
-
 
 def string_list(input_filename):
     """
@@ -74,19 +74,55 @@ class CharacterGrid:
     extends to the right, and the positive y axis extends download. For example,
     the fifth character on the 2nd line would be at position (1,4).
     """
-    def __init__(self,input_filename):
+    def __init__(self,input_filename = None):
         """
         Loads the puzzle input data.
 
-        Mandatory arguments:
+        Optional arguments:
         * input_filename - the name of the input file relative to the current
           directory.
+
+        If input_filename is not provided, creates an empty character grid.
         """
+        if input_filename == None:
+            self.__character_positions = {}
+            self.__max_x = 0
+            self.__max_y = 0
+            return
         input_as_string_list = string_list(input_filename)
         self.__character_positions = {}
         for y in range(len(input_as_string_list)):
             for x in range(len(input_as_string_list[y])):
                 self.__character_positions[(x,y)] = {"character": input_as_string_list[y][x]}
+        self.__max_x = max([position_tuple[0] for position_tuple in self.__character_positions.keys()])
+        self.__max_y = max([position_tuple[1] for position_tuple in self.__character_positions.keys()])
+    def __eq__(self, other):
+        """
+        Determines whether two CharacterGrid objects have the same characters in
+        the same positions.
+        """
+        if not isinstance(other,CharacterGrid):
+            return NotImplemented
+        if set(self.__character_positions.keys()) != set(other.__character_positions.keys()):
+            return False
+        for position in self.__character_positions.keys():
+            if self.__character_positions[position]["character"] != other.__character_positions[position]["character"]:
+                return False
+        return True
+    def copy(self):
+        """
+        Creates a copy of this CharacterGrid
+        """
+        new_character_grid = CharacterGrid()
+        new_character_grid.__character_positions = copy.deepcopy(self.__character_positions)
+        return new_character_grid
+    def get_occupied_positions(self):
+        """
+        Returns a list of positions that are occupied by characters.
+        
+        Example: [(0,0), (0,1), (1,0), (1,1)]
+        """
+        return self.__character_positions.keys()
     def get_character(self, x, y):
         """
         Retrieves a single character in a given position.
@@ -108,6 +144,10 @@ class CharacterGrid:
         except KeyError:
             self.__character_positions[(x,y)] = {"character": new_character}
             logger.debug(f"Setting character at position ({x},{y}). There was no character previously at this location.")
+        if x > self.__max_x:
+            self.__max_x = x
+        if y > self.__max_y:
+            self.__max_y = y
     def set_highlight(self, x, y):
         """
         Causes the character at the given position to be highlighted in an ANSI 
@@ -132,13 +172,13 @@ class CharacterGrid:
         """
         Retrieves the largest x coordinate occupied by a character.
         """
-        return max([position_tuple[0] for position_tuple in self.__character_positions.keys()])
+        return self.__max_y
 
     def get_max_y(self):
         """
         Retrieves the largest y coordinate occupied by a character.
         """
-        return max([position_tuple[1] for position_tuple in self.__character_positions.keys()])
+        return self.__max_y
     def display(self):
         """
         Prints the character grid to the console.
@@ -165,3 +205,4 @@ class CharacterGrid:
                     print('')
                     continue
             x += 1
+
