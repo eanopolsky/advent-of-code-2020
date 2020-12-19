@@ -29,7 +29,7 @@ def rule_to_regex(rule_number):
         max_message_length = max([len(message) for message in raw_messages])
         regex_text = "("
         for i in range(1,max_message_length // 2):
-            regex_text += rule_to_regex(42) * i + rule_to_regex(31) * i + "|"
+            regex_text += "(" + rule_to_regex(42) + "){" f"{i},{i}" + "}(" + rule_to_regex(31) + "){" f"{i},{i}" + "}" + "|"
         regex_text = regex_text[0:-1] + ")"
         return regex_text
     if rules[rule_number] == '"a"':
