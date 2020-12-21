@@ -25,7 +25,11 @@ then echo "Usage: $0"
 fi
 
 if [ $# == 1 ]
-then curl -b "session=$SESSIONCOOKIE" -o "input_day$1" "https://adventofcode.com/2020/day/$1/input"
+then if [ $(TZ=America/New_York date -d 2020-12-${1}T00:00:01 '+%s') -gt  $(date +%s) ]
+     then echo "Input for day $1 not available yet."
+	  exit 1
+     fi
+     curl -b "session=$SESSIONCOOKIE" -o "input_day$1" "https://adventofcode.com/2020/day/$1/input"
      exit $?
 fi
 
