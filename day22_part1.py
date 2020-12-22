@@ -34,4 +34,6 @@ def score_deck(player_deck):
         total_score += (i+1)*player_deck[i]
     return total_score
 
-print(score_deck(player_1_deck)+score_deck(player_2_deck))
+winner = 1 if (len(player_1_deck) != 0) else 2
+print(f"Player {winner} won with score {score_deck(player_1_deck)+score_deck(player_2_deck)}")
+

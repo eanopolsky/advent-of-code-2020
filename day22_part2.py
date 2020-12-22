@@ -25,7 +25,7 @@ def play_recursive_combat(player_1_deck, player_2_deck):
     Returns a tuple: (winner, score). Winner may be 1 or 2 to indicate which player won.
     Score is the winner's score.
     """
-    this_game_history = set() # contains tuples of deck content tuples: tuple(tuple(deck1),tuple(deck2))
+    this_game_history = set() # contains tuples of deck content tuples: (tuple(deck1),tuple(deck2))
     while True:
         if (tuple(player_1_deck),tuple(player_2_deck)) in this_game_history:
             return (1,score_deck(player_1_deck))
@@ -62,4 +62,4 @@ def play_recursive_combat(player_1_deck, player_2_deck):
                 raise RuntimeError("Two equal cards played against each other.")
             
 results = play_recursive_combat(player_1_deck,player_2_deck)
-print(results[1])
+print(f"Player {results[0]} won with score {results[1]}")
